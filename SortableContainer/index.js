@@ -4,7 +4,6 @@ import {findDOMNode} from 'react-dom';
 import invariant from 'invariant';
 
 import Manager from '../Manager';
-import sortManager from '../../sort_manager';
 import {
   closest,
   events,
