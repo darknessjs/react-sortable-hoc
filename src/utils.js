@@ -1,4 +1,5 @@
 import invariant from 'invariant';
+import memoize from 'memoizee';
 
 export function arrayMove(arr, previousIndex, newIndex) {
   const array = arr.slice(0);
@@ -42,12 +43,11 @@ export const vendorPrefix = (function() {
   }
 })();
 
-export function closest(el, fn) {
-  while (el) {
-    if (fn(el)) return el;
-    el = el.parentNode;
-  }
-}
+export const closest = memoize((el, fn) => {
+  if (!el) return null;
+  if (fn(el)) return el;
+  return closest(el.parentNode, fn);
+});
 
 export function limit(min, max, value) {
   if (value < min) {
