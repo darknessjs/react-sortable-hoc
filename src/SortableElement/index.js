@@ -65,7 +65,7 @@ export default function sortableElement(WrappedComponent, config = {withRef: fal
       };
 
       this.ref = {node};
-      this.context.manager.add(collection, this.ref);
+      this.context.manager.add(collection, this.ref, index);
     }
 
     removeDraggable(collection) {

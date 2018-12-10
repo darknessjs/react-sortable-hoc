@@ -1,9 +1,14 @@
+import { get } from 'lodash-es';
 export default class Manager {
   refs = {};
+  group = {};
 
-  add(collection, ref) {
+  add(collection, ref, index) {
     if (!this.refs[collection]) {
       this.refs[collection] = [];
+    }
+    if (this.start != null && this.start.index === index) {
+      this.start.node = ref.node;
     }
 
     this.refs[collection].push(ref);
@@ -15,6 +20,32 @@ export default class Manager {
     if (index !== -1) {
       this.refs[collection].splice(index, 1);
     }
+  }
+
+  setGroup = (group, node) => {
+    this.group[group] = node;
+  }
+
+
+  refreshAllGroup = () => {
+    const groupKeys = Object.keys(this.group);
+    groupKeys.forEach((groupKey) => {
+      this.group[groupKey].sortGroupInfo.reRenderer
+      && this.group[groupKey].sortGroupInfo.reRenderer();
+    });
+  }
+
+  getIsGroupDisabled = (collection) => {
+    const startManager = get(this, ['start'], null);
+    const startCollection = get(startManager, ['collection'], null);
+    const sortGroup = get(this, ['group', collection, 'sortGroupInfo', 'sortGroup'], {});
+    if (startCollection != null
+      && startCollection !== collection
+      && !sortGroup[startCollection]
+    ) {
+      return true;
+    }
+    return false;
   }
 
   isActive() {
@@ -33,7 +64,8 @@ export default class Manager {
   }
 
   getOrderedRefs(collection = this.active.collection) {
-    return this.refs[collection].sort(sortByIndex);
+    const orederedRefs = get(this.refs, [collection], []);
+    return orederedRefs.sort(sortByIndex);
   }
 }
 
